@@ -1,4 +1,6 @@
 Course Recommendation System
+
+
 A hybrid course recommendation system combining Content-Based Filtering and Collaborative Filtering to recommend courses based on course features (like course name, difficulty, certification offered) and user ratings.
 
 Overview
