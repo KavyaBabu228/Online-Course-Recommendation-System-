@@ -2,53 +2,67 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 1,
-   "id": "ba7ae582-b907-4642-be93-ed074a1f6338",
+   "execution_count": 13,
+   "id": "95af9339-5afc-4498-95ec-b29f49972ed9",
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "✅ Saved fitted pipeline!\n",
+      "✅ Saved X_sparse.pkl!\n"
+     ]
+    }
+   ],
    "source": [
-    "from fastapi import FastAPI\n",
-    "import joblib\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 2,
-   "id": "369d840a-43e7-4c35-bee6-e9066275d733",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "app = FastAPI()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "0f617b53-563e-4c65-9b39-14491f37e68f",
-   "metadata": {},
-   "source": [
-    "#### Load models"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 4,
-   "id": "a39deb98-75c9-41a7-b5f9-f63de405a775",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "pipeline = joblib.load('content_pipeline.pkl')\n",
-    "knn_model = joblib.load('content_knn_model.pkl')\n",
+    "# 1. Import required libraries\n",
+    "import pandas as pd\n",
+    "import joblib\n",
+    "from sklearn.compose import ColumnTransformer\n",
+    "from sklearn.preprocessing import OneHotEncoder, StandardScaler\n",
+    "from sklearn.pipeline import Pipeline\n",
+    "from scipy.sparse import csr_matrix\n",
     "\n",
-    "@app.get(\"/recommend\")\n",
-    "def recommend(course_name: str, alpha: float = 0.5, n_recs: int = 5):\n",
-    "    # Recommendation logic here\n",
-    "    return {\"message\": \"Recommendations for \" + course_name}"
+    "# 2. Load your dataset\n",
+    "df = pd.read_excel(r\"C:\\Users\\kavya\\Downloads\\online_course_recommendation_v2.xlsx\")\n",
+    "\n",
+    "# 3. Define your preprocessing pipeline (example structure)\n",
+    "numeric_features = ['rating', 'course_duration_hours', 'enrollment_numbers', 'course_price', 'feedback_score', 'time_spent_hours', 'previous_courses_taken']\n",
+    "categorical_features = ['difficulty_level', 'certification_offered', 'study_material_available']\n",
+    "\n",
+    "preprocessor = ColumnTransformer(\n",
+    "    transformers=[\n",
+    "        ('num', StandardScaler(), numeric_features),\n",
+    "        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)\n",
+    "    ]\n",
+    ")\n",
+    "\n",
+    "# 4. Create pipeline (if needed you can add models too)\n",
+    "pipeline = Pipeline(steps=[\n",
+    "    ('preprocessor', preprocessor)\n",
+    "])\n",
+    "\n",
+    "# 5. Fit the pipeline on your dataframe\n",
+    "pipeline.fit(df)\n",
+    "\n",
+    "# 6. Save the fitted pipeline\n",
+    "joblib.dump(pipeline, r\"C:\\Users\\kavya\\Desktop\\OCR\\content_pipeline.pkl\")\n",
+    "print(\"✅ Saved fitted pipeline!\")\n",
+    "\n",
+    "# 7. Now transform the data\n",
+    "X = pipeline.transform(df)\n",
+    "X_sparse = csr_matrix(X)\n",
+    "\n",
+    "# 8. Save the sparse matrix\n",
+    "joblib.dump(X_sparse, r\"C:\\Users\\kavya\\Desktop\\OCR\\X_sparse.pkl\")\n",
+    "print(\"✅ Saved X_sparse.pkl!\")\n"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "da28435d-ba27-439b-ba01-0aebd354e3a2",
+   "id": "33e12ce9-53c2-48cf-9298-bc786b4ecb50",
    "metadata": {},
    "outputs": [],
    "source": []
