@@ -55,10 +55,10 @@ Two recommendation strategies were implemented and combined:
 
 ---
 
-## 🚀 (Optional) Deployment
+## 🚀 Deployment
 
-The system can be deployed using **Streamlit** or **Flask**.
-
+The system can be deployed using **Streamlit** .
+Deployment - http://localhost:8501/
 ### Key Features:
 - Simple UI to enter course preferences or select past rated courses  
 - Backend logic to process input and generate top N course recommendations  
